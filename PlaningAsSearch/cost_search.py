@@ -90,7 +90,7 @@ def uniform_cost(grid, start, goal):
         current_node = item[1]
         current_cost = item[0]
 
-        # TODO: Check if the current vertex corresponds to the goal state
+        # Check if the current vertex corresponds to the goal state
         # if False:
         if current_node == goal:
             print('Found a path.')
@@ -98,14 +98,14 @@ def uniform_cost(grid, start, goal):
             break
         else:
             for action in valid_actions(grid, current_node):
-                # TODO: determine the next_node using the action delta
+                # determine the next_node using the action delta
                 delta = action.delta
                 cost = action.cost
                 next_node = (current_node[0] + delta[0], current_node[1] + delta[1])
-                # TODO: compute the new cost
+                # compute the new cost
                 new_cost = current_cost + cost
                 
-                # TODO: Check if the new vertex has not been visited before.
+                # Check if the new vertex has not been visited before.
                 # If the node has not been visited you will need to
                 # 1. Mark it as visited
                 # 2. Add it to the queue
