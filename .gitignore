@@ -1,3 +1,5 @@
 .vscode
 .idea
 .python-version
+.cache
+.pytest_chache
