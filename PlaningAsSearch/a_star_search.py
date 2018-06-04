@@ -2,6 +2,7 @@ from queue import PriorityQueue
 import numpy as np
 from enum import Enum
 
+
 class Action(Enum):
     """
     An action is represented by a 3 element tuple.
@@ -31,7 +32,7 @@ class Action(Enum):
     
     @property
     def delta(self):
-        return (self.value[0], self.value[1])
+        return self.value[0], self.value[1]
             
     
 def valid_actions(grid, current_node):
@@ -56,6 +57,7 @@ def valid_actions(grid, current_node):
         
     return valid
 
+
 def visualize_path(grid, path, start):
     sgrid = np.zeros(np.shape(grid), dtype=np.str)
     sgrid[:] = ' '
@@ -71,6 +73,7 @@ def visualize_path(grid, path, start):
     sgrid[start[0], start[1]] = 'S'  
     return sgrid
 
+
 # implement a heuristic function. This may be one of the
 # functions described above or feel free to think of something
 # else.
@@ -79,6 +82,7 @@ def heuristic(position, goal_position):
     y_cost = abs(goal_position[1] - position[1])
     h = x_cost + y_cost
     return h
+
 
 def a_star(grid, h, start, goal):
 
@@ -134,7 +138,7 @@ def a_star(grid, h, start, goal):
     return path[::-1], path_cost
 
 
-if  __name__ == "__main__":
+if __name__ == "__main__":
 
     start = (0, 0)
     goal = (4, 4)
