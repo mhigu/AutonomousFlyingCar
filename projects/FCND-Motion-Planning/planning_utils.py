@@ -62,7 +62,7 @@ class Action(Enum):
 
     @property
     def delta(self):
-        return (self.value[0], self.value[1])
+        return self.value[0], self.value[1]
 
 
 def valid_actions(grid, current_node):
@@ -140,7 +140,5 @@ def a_star(grid, h, start, goal):
     return path[::-1], path_cost
 
 
-
 def heuristic(position, goal_position):
     return np.linalg.norm(np.array(position) - np.array(goal_position))
-
