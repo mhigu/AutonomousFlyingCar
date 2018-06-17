@@ -69,7 +69,8 @@ class BackyardFlyer(Drone):
                 if ~self.armed & ~self.guided:
                     self.manual_transition()
 
-    def calculate_box(self):
+    @staticmethod
+    def calculate_box():
         print("Setting Home")
         local_waypoints = [[10.0, 0.0, 3.0], [10.0, 10.0, 3.0], [0.0, 10.0, 3.0], [0.0, 0.0, 3.0]]
         return local_waypoints
@@ -133,7 +134,7 @@ class BackyardFlyer(Drone):
 
 if __name__ == "__main__":
     conn = MavlinkConnection('tcp:127.0.0.1:5760', threaded=False, PX4=False)
-    #conn = WebSocketConnection('ws://127.0.0.1:5760')
+    # conn = WebSocketConnection('ws://127.0.0.1:5760')
     drone = BackyardFlyer(conn)
     time.sleep(2)
     drone.start()
