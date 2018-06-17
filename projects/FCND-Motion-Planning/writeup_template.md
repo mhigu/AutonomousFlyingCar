@@ -36,23 +36,7 @@ But in `motion_planning.py`, the waypoints is calculated by `a_start()` [functio
 
 and manipulated in [here](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/motion_planning.py#L155-L157).
 
-So when `motion_planning.py` is executed, the behavior is going be a jerky path of waypoints to the northeast for about 10 m then land.  
-
-##### `motion_planning.py`
-
-
-
-These scripts contain a basic planning implementation that includes...
-
-And here's a lovely image of my results (ok this image has nothing to do with it, but it's a nice example of how to include images in your writeup!)
-![Top Down View](./misc/high_up.png)
-
-Here's | A | Snappy | Table
---- | --- | --- | ---
-1 | `highlight` | **bold** | 7.41
-2 | a | b | c
-3 | *italic* | text | 403
-4 | 2 | 3 | abcd
+So when `motion_planning.py` is executed, the behavior is going be a jerky path of waypoints to the northeast for about 10 m then land.
 
 ### Implementing Your Path Planning Algorithm
 
@@ -95,3 +79,17 @@ It works!
 For an extra challenge, consider implementing some of the techniques described in the "Real World Planning" lesson. You could try implementing a vehicle model to take dynamic constraints into account, or implement a replanning method to invoke if you get off course or encounter unexpected obstacles.
 
 
+
+### README TIPS(REMOVE THIS WHEN YOU DONE!!)
+
+These scripts contain a basic planning implementation that includes...
+
+And here's a lovely image of my results (ok this image has nothing to do with it, but it's a nice example of how to include images in your writeup!)
+![Top Down View](./misc/high_up.png)
+
+Here's | A | Snappy | Table
+--- | --- | --- | ---
+1 | `highlight` | **bold** | 7.41
+2 | a | b | c
+3 | *italic* | text | 403
+4 | 2 | 3 | abcd
