@@ -30,13 +30,9 @@ You're reading it! Below I describe how I addressed each rubric point and where 
 
 ##### 1-1. what's different about `motion_planning.py` from the `backyard_flyer_solution.py`
 
-In `backyard_flyer_solution.py`, the waypoints is set to move square as this [this line shows](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/backyard_flyer_solution.py#L72-L75)
+In `backyard_flyer_solution.py`, the waypoints is set to move square(just straight with north or east)) as this [this line shows](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/backyard_flyer_solution.py#L72-L75)
 
-But in `motion_planning.py`, the waypoints is calculated by `a_start()` [function](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/motion_planning.py#L150)
-
-and manipulated in [here](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/motion_planning.py#L155-L157).
-
-So when `motion_planning.py` is executed, the behavior is going be a jerky path of waypoints to the northeast for about 10 m then land.
+But in `motion_planning.py`, the waypoints especially the goal point is diagonal direction and diagonal direction movement is not allowed in [Action](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/planning_utils.py#L45-L65) so `motion_planning.py` is executed, the behavior is going be a jerky path of waypoints to the northeast for about 10 m then land.
 
 ##### 1-2. how the functions provided in `planning_utils.py` work
 
