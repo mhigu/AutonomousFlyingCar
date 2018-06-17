@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 import numpy as np
-from FlyingCarRepresentation.quaternions import euler_to_quaternion, quaternion_to_euler
+from lessons.FlyingCarRepresentation.quaternions import euler_to_quaternion, quaternion_to_euler
 
 
 class TestQuaternion(TestCase):

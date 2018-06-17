@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from FlyingCarRepresentation.euler_rotaion import EulerRotation
-from FlyingCarRepresentation.euler_rotaion import Rotation
+from lessons.FlyingCarRepresentation import EulerRotation
+from lessons.FlyingCarRepresentation import Rotation
 
 import numpy as np
 
