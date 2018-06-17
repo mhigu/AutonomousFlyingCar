@@ -27,6 +27,27 @@ You're reading it! Below I describe how I addressed each rubric point and where 
 ### Explain the Starter Code
 
 #### 1. Explain the functionality of what's provided in `motion_planning.py` and `planning_utils.py`
+
+##### 1-1. what's different about motion_planning.py from the backyard_flyer_solution.py
+
+In `backyard_flyer_solution.py`, the waypoints is set to move square as this line shows
+
+https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/backyard_flyer_solution.py#L72-L75
+
+But in `motion_planning.py`, the waypoints is calculated by `a_start()` function
+
+https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/motion_planning.py#L150
+
+and manipulated in here.
+
+https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/motion_planning.py#L155-L157
+
+So when `motion_planning.py` is executed, the behavior is going be a jerky path of waypoints to the northeast for about 10 m then land.  
+
+##### `motion_planning.py`
+
+
+
 These scripts contain a basic planning implementation that includes...
 
 And here's a lovely image of my results (ok this image has nothing to do with it, but it's a nice example of how to include images in your writeup!)
