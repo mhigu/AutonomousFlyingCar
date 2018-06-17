@@ -30,22 +30,11 @@ You're reading it! Below I describe how I addressed each rubric point and where 
 
 ##### 1-1. what's different about motion_planning.py from the backyard_flyer_solution.py
 
-In `backyard_flyer_solution.py`, the waypoints is set to move square as this line shows
+In `backyard_flyer_solution.py`, the waypoints is set to move square as this [this line shows](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/backyard_flyer_solution.py#L72-L75)
 
-https://github.com/mhigu/Udacity_FlyingCarND/blob/f7cb07c3c2ce3453ec4b1d97b2afdba1e49cd62f/projects/FCND-Motion-Planning/backyard_flyer_solution.py#L73-L75
+But in `motion_planning.py`, the waypoints is calculated by `a_start()` [function](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/motion_planning.py#L150)
 
-![in original code](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/backyard_flyer_solution.py#L72-L75)
-
-But in `motion_planning.py`, the waypoints is calculated by `a_start()` function
-
-https://github.com/mhigu/Udacity_FlyingCarND/blob/f7cb07c3c2ce3453ec4b1d97b2afdba1e49cd62f/projects/FCND-Motion-Planning/motion_planning.py#L153
-
-![in original code](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/motion_planning.py#L150)
-
-and manipulated in here.
-https://github.com/mhigu/Udacity_FlyingCarND/blob/f7cb07c3c2ce3453ec4b1d97b2afdba1e49cd62f/projects/FCND-Motion-Planning/motion_planning.py#L158-L160
-
-![in original code](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/motion_planning.py#L155-L157)
+and manipulated in [here](https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/motion_planning.py#L155-L157).
 
 So when `motion_planning.py` is executed, the behavior is going be a jerky path of waypoints to the northeast for about 10 m then land.  
 
