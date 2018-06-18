@@ -1,6 +1,7 @@
 from enum import Enum
 from queue import PriorityQueue
 import numpy as np
+from math import sqrt
 
 
 def create_grid(data, drone_altitude, safety_distance):
@@ -55,6 +56,10 @@ class Action(Enum):
     EAST = (0, 1, 1)
     NORTH = (-1, 0, 1)
     SOUTH = (1, 0, 1)
+    NORTH_WEST = (-1, -1, sqrt(2))
+    NORTH_EAST = (-1, 1, sqrt(2))
+    SOUTH_WEST = (1, -1, sqrt(2))
+    SOUTH_EAST = (1, 1, sqrt(2))
 
     @property
     def cost(self):
@@ -84,6 +89,14 @@ def valid_actions(grid, current_node):
         valid_actions.remove(Action.WEST)
     if y + 1 > m or grid[x, y + 1] == 1:
         valid_actions.remove(Action.EAST)
+    if x - 1 < 0 or y - 1 < 0 or grid[x - 1, y - 1] == 1:
+        valid_actions.remove(Action.NORTH_WEST)
+    if x - 1 < 0 or y + 1 > m or grid[x - 1, y + 1] == 1:
+        valid_actions.remove(Action.NORTH_EAST)
+    if x + 1 > n or y + 1 > m or grid[x + 1, y + 1] == 1:
+        valid_actions.remove(Action.SOUTH_EAST)
+    if x + 1 > n or y - 1 < 0 or grid[x + 1, y - 1] == 1:
+        valid_actions.remove(Action.SOUTH_WEST)
 
     return valid_actions
 
@@ -142,3 +155,48 @@ def a_star(grid, h, start, goal):
 
 def heuristic(position, goal_position):
     return np.linalg.norm(np.array(position) - np.array(goal_position))
+
+
+def extract_to_2d_array(p):
+    return np.array([p[0], p[1], 1.]).reshape(1, -1)
+
+
+def check_collinearity(p1, p2, p3, epsilon=1e-6):
+    m = np.concatenate((p1, p2, p3), 0)
+    det = np.linalg.det(m)
+    return abs(det) < epsilon
+
+
+def window(iterable, size=2):
+        i = iter(iterable)
+        win = []
+        for e in range(0, size):
+            win.append(next(i))
+        yield win
+        for e in i:
+            win = win[1:] + [e]
+            yield win
+
+
+def prune_path(path, tolerance):
+    if path is not None:
+        pruned_path = []
+        for i, three_points in enumerate(window(path, 3)):
+            if i == 0:
+                pruned_path.append(three_points[0])
+                pruned_path.append(three_points[1])
+                pruned_path.append(three_points[2])
+            else:
+                _p1 = extract_to_2d_array(three_points[0])
+                _p2 = extract_to_2d_array(three_points[1])
+                _p3 = extract_to_2d_array(three_points[2])
+                if check_collinearity(_p1, _p2, _p3, tolerance):
+                    pruned_path.pop()
+                    pruned_path.append(three_points[2])
+                else:
+                    pruned_path.append(three_points[2])
+    else:
+        pruned_path = path
+
+    return pruned_path
+
