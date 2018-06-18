@@ -47,7 +47,8 @@ a_star() | [to calculate waypoints](https://github.com/udacity/FCND-Motion-Plann
 
 #### 1. Set your global home position
 Read the first line of the csv file, extract lat0 and lon0 as floating point values and use the self.set_home_position() method to set global home.
-https://github.com/udacity/FCND-Motion-Planning/blob/590a4c12b9ec76295a396d8c87a34f149176c119/planning_utils.py#L91
+
+https://github.com/mhigu/Udacity_FlyingCarND/blob/5641aed04a466da518e60a9f7dca43f81c26e1e9/projects/FCND-Motion-Planning/motion_planning.py#L128-L133
 
 And here is a lovely picture of our downtown San Francisco environment from above!
 ![Map of SF](./misc/map.png)
