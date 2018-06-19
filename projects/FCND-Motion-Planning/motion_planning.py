@@ -119,7 +119,7 @@ class MotionPlanning(Drone):
         self.flight_state = States.PLANNING
         print("Searching for a path ...")
         TARGET_ALTITUDE = 5
-        SAFETY_DISTANCE = 5
+        SAFETY_DISTANCE = 7
 
         self.target_position[2] = TARGET_ALTITUDE
 
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=5760, help='Port number')
     parser.add_argument('--host', type=str, default='127.0.0.1', help="host address, i.e. '127.0.0.1'")
     parser.add_argument('--lat', type=float, default=37.79696712543327, help="goal latitude")
-    parser.add_argument('--lon', type=float, default=-122.4, help="goal longitude")
+    parser.add_argument('--lon', type=float, default=-122.39995, help="goal longitude")
     args = parser.parse_args()
 
     conn = MavlinkConnection('tcp:{0}:{1}'.format(args.host, args.port), timeout=60)

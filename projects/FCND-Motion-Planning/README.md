@@ -96,7 +96,7 @@ Use collinearity test to prune path of unnecessary waypoints using determinant.
 https://github.com/mhigu/Udacity_FlyingCarND/blob/66c901676816da47bd032c035c77732dbc6bc207/projects/FCND-Motion-Planning/planning_utils.py#L164-L167
 
 Pruning path is a little tricky for me because making epsilon(error value) for determinant bigger, then my drone stack in middle of the waypoint. So I had to adjust that value.
-This have to be solved by medial axis approach and graph approach I think. But I don't have enough time for now so leave it as FIXME and I'll come back when I got some more time later.  
+This have to be solved by medial axis approach and graph approach or local/global planning I think. But I don't have enough time for now so leave it as FIXME and I'll come back when I got some more time later.  
 
 ### Execute the flight
 #### 1. Does it work?
