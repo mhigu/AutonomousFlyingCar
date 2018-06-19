@@ -178,7 +178,7 @@ def window(iterable, size=2):
             yield win
 
 
-def prune_path(path, tolerance):
+def prune_path(path, tolerance=1e-6):
     if path is not None:
         pruned_path = []
         for i, three_points in enumerate(window(path, 3)):

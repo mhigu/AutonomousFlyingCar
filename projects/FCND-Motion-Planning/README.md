@@ -58,15 +58,22 @@ Determine local position relative to global home using global_to_local() functio
 
 https://github.com/mhigu/Udacity_FlyingCarND/blob/66c901676816da47bd032c035c77732dbc6bc207/projects/FCND-Motion-Planning/motion_planning.py#L137
 
+I don't retrieve current global position and global position, because there is global_position attribute in class so just path it to global_to_local() function.
+The return value passed to `current_local_position` variable.
+
 #### 3. Set grid start position from local position
 Set start position from local position in here.
 
 https://github.com/mhigu/Udacity_FlyingCarND/blob/66c901676816da47bd032c035c77732dbc6bc207/projects/FCND-Motion-Planning/motion_planning.py#L152
 
+Just retrieve north, east coordinate value from `current_local_position` I defined before. This part was little hard because I can't figure out what is representing local position value and how it should be handled in. So I had to read source code deeper and write down what is done inside source code... But anyway I found out that is same value as colliders.csv file has. 
+
 #### 4. Set grid goal position from geodetic coords
 Set goal position in here.
 
 https://github.com/mhigu/Udacity_FlyingCarND/blob/66c901676816da47bd032c035c77732dbc6bc207/projects/FCND-Motion-Planning/motion_planning.py#L157
+
+This part also difficult for me first as I described above due to confusion for local position. But once I got that make sense to me.  
 
 #### 5. Modify A* to include diagonal motion (or replace A* altogether)
 Modify code in planning_utils() to update the A* implementation to include diagonal motions on the grid that have a cost of sqrt(2).
@@ -75,14 +82,21 @@ Modify code in planning_utils() to update the A* implementation to include diago
 
 https://github.com/mhigu/Udacity_FlyingCarND/blob/66c901676816da47bd032c035c77732dbc6bc207/projects/FCND-Motion-Planning/planning_utils.py#L46-L70
 
+Just define each diagonal movement. This part was easy.  
+
 [Action Validation]
 
 https://github.com/mhigu/Udacity_FlyingCarND/blob/66c901676816da47bd032c035c77732dbc6bc207/projects/FCND-Motion-Planning/planning_utils.py#L73-L101
+
+Action validation had a bug first that plan removes Action twice. Then I debugged, and fixed condition for that then it worked! 
 
 #### 6. Cull waypoints 
 Use collinearity test to prune path of unnecessary waypoints using determinant.
 
 https://github.com/mhigu/Udacity_FlyingCarND/blob/66c901676816da47bd032c035c77732dbc6bc207/projects/FCND-Motion-Planning/planning_utils.py#L164-L167
+
+Pruning path is a little tricky for me because making epsilon(error value) for determinant bigger, then my drone stack in middle of the waypoint. So I had to adjust that value.
+This have to be solved by medial axis approach and graph approach I think. But I don't have enough time for now so leave it as FIXME and I'll come back when I got some more time later.  
 
 ### Execute the flight
 #### 1. Does it work?
@@ -93,7 +107,8 @@ cd projects/FCND-Motion-Planning
 
 # up simulator!
 # and exexute python script
-python motion_planning.py
+# lat/lon argument is optional for custom goal designation.
+python motion_planning.py [--lat xxx --lon yyy] 
 ```
 
 It works!
