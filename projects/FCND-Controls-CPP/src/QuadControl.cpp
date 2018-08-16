@@ -74,7 +74,7 @@ VehicleCommand QuadControl::GenerateMotorCommands(float collThrustCmd, V3F momen
   // Calculate each coordinate force from commanded moment.
   float fx = momentCmd.x / l;
   float fy = momentCmd.y / l;
-  float fz = momentCmd.z / kappa;
+  float fz = - momentCmd.z / kappa;
   float ft = collThrustCmd;
 
   // From the equation between moment and thrust,
@@ -86,8 +86,20 @@ VehicleCommand QuadControl::GenerateMotorCommands(float collThrustCmd, V3F momen
   // Then desired thrusts become,,,
   cmd.desiredThrustsN[0] = (ft + fx + fy + fz) / 4.f;
   cmd.desiredThrustsN[1] = (ft - fx + fy - fz) / 4.f;
-  cmd.desiredThrustsN[3] = (ft - fx - fy + fz) / 4.f;
   cmd.desiredThrustsN[2] = (ft + fx - fy - fz) / 4.f;
+  cmd.desiredThrustsN[3] = (ft - fx - fy + fz) / 4.f;
+
+  // Considering upper max thrust and lower min thrust.
+  cmd.desiredThrustsN[0] = CONSTRAIN(cmd.desiredThrustsN[0], minMotorThrust, maxMotorThrust);
+  cmd.desiredThrustsN[1] = CONSTRAIN(cmd.desiredThrustsN[1], minMotorThrust, maxMotorThrust);
+  cmd.desiredThrustsN[2] = CONSTRAIN(cmd.desiredThrustsN[2], minMotorThrust, maxMotorThrust);
+  cmd.desiredThrustsN[3] = CONSTRAIN(cmd.desiredThrustsN[3], minMotorThrust, maxMotorThrust);
+
+
+//  cmd.desiredThrustsN[0] = mass * 9.81f / 4.f; // front left
+//  cmd.desiredThrustsN[1] = mass * 9.81f / 4.f; // front right
+//  cmd.desiredThrustsN[2] = mass * 9.81f / 4.f; // rear left
+//  cmd.desiredThrustsN[3] = mass * 9.81f / 4.f; // rear right
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
   return cmd;
@@ -145,9 +157,27 @@ V3F QuadControl::RollPitchControl(V3F accelCmd, Quaternion<float> attitude, floa
   V3F pqrCmd;
   Mat3x3F R = attitude.RotationMatrix_IwrtB();
 
+
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
+  if (collThrustCmd > 0.0){
+    float c_d = collThrustCmd/mass;
+    float target_R13 = -CONSTRAIN(accelCmd.x/c_d, -maxTiltAngle, maxTiltAngle);
+    float target_R23 = -CONSTRAIN(accelCmd.y/c_d, -maxTiltAngle, maxTiltAngle);
+    float p_cmd = (1/R(2, 2)) * (-R(1, 0) * kpBank * (R(0, 2)-target_R13) + R(0, 0) * kpBank * (R(1, 2)-target_R23));
+    float q_cmd = (1/R(2, 2)) * (-R(1, 1) * kpBank * (R(0, 2)-target_R13) + R(0, 1) * kpBank * (R(1, 2)-target_R23));
 
+    pqrCmd.x = p_cmd;
+    pqrCmd.y = q_cmd;
+  } else {
+    float p_cmd = 0.0;
+    float q_cmd = 0.0;
 
+    pqrCmd.x = p_cmd;
+    pqrCmd.y = q_cmd;
+  }
+
+  // insert 0.0 as README described.
+  pqrCmd.z = 0.0;
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
