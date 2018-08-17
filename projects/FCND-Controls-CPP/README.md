@@ -129,4 +129,4 @@ And the result was like this...
 
 ![trajectories](images/trj.jpg)
 
-This is not so good trajectory so I'll get back to improve performance when I get free time.
+This is not so good trajectory especially in z axis, so I'll get back to improve performance when I get free time.
