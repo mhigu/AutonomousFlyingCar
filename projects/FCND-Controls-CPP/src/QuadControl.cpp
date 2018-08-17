@@ -209,8 +209,20 @@ float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, flo
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 
+//  float hdotCmd = kpPosZ * (posZCmd - posZ) + velZCmd;
+//  hdotCmd = CONSTRAIN(hdotCmd, -maxDescentRate, maxAscentRate);
+//
+//  float accelCmd = accelZCmd + kpVelZ * (hdotCmd - velZ);
+//  thrust = CONSTRAIN(mass * accelCmd / R(2,2), 0.f, maxMotorThrust);
 
+  float velocityZCmdDash = -CONSTRAIN(-velZCmd,-maxDescentRate,maxAscentRate);
+  float posZErr = posZCmd - posZ;
+  integratedAltitudeError += KiPosZ * posZErr * dt;
 
+  float acl = kpPosZ*(posZCmd - posZ) + kpVelZ*(velocityZCmdDash - velZ) + accelZCmd + integratedAltitudeError;
+  float acz = (acl - float(CONST_GRAVITY))/R(2,2);
+
+  thrust = -mass * CONSTRAIN(acz, -maxDescentRate / dt, maxAscentRate / dt);
   /////////////////////////////// END STUDENT CODE ////////////////////////////
   
   return thrust;
@@ -246,8 +258,32 @@ V3F QuadControl::LateralPositionControl(V3F posCmd, V3F velCmd, V3F pos, V3F vel
   V3F accelCmd = accelCmdFF;
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
+//  V3F positionErr = posCmd - pos;
+//  V3F velocityCmd = kpPosXY * positionErr;
+//
+//  // limit speed
+//  if (velocityCmd.magXY() > maxSpeedXY) {
+//    velocityCmd = velocityCmd.norm() * velocityCmd * maxSpeedXY;
+//  }
+//
+//  V3F velocityErr = velocityCmd - vel;
+//
+//
+//  accelCmd += accelCmdFF + kpPosXY * positionErr + kpVelXY * velocityErr;
 
-  
+  // limit speed
+  V3F velCmd4Target;
+  if (velCmd.mag() > maxSpeedXY) {
+    velCmd4Target = velCmd.norm() * maxSpeedXY;
+  } else {
+    velCmd4Target = velCmd;
+  }
+
+  accelCmd += accelCmdFF + kpPosXY * (posCmd - pos) + kpVelXY * (velCmd4Target - vel);
+
+  if (accelCmd.mag() > maxAccelXY){
+    accelCmd = accelCmd.norm() * maxAccelXY;
+  }
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
@@ -269,7 +305,26 @@ float QuadControl::YawControl(float yawCmd, float yaw)
 
   float yawRateCmd=0;
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
+//  float yawErr = yawCmd - yaw;
+//  yawErr = fmodf(yawErr, F_PI*2.f);
+//
+//  if (yawErr > F_PI){
+//    yawErr = yawErr - 2.f * F_PI;
+//  } else if (yawErr < -M_PI){
+//    yawErr = yawErr + 2.f * F_PI;
+//  }
+//
+//  yawRateCmd = kpYaw * yawErr;
 
+  float yaw_error = yawRateCmd - yaw;
+  yaw_error = fmodf(yaw_error, F_PI*2.f);
+
+  if (yaw_error >F_PI){
+    yaw_error = yaw_error - 2.0f*F_PI;
+  } else if (yaw_error < -M_PI){
+    yaw_error = yaw_error + 2.0f*F_PI;
+  }
+  yawRateCmd = kpYaw*yaw_error;
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
