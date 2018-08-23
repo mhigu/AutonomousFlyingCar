@@ -1,0 +1,6 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/mhigu/dev/GitHub/Udacity_FlyingCarND/projects/FCND-Estination-CPP
+-- Found GLUT: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/System/Library/Frameworks/GLUT.framework  
+-- Found OpenGL: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/System/Library/Frameworks/OpenGL.framework   
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/mhigu/dev/GitHub/Udacity_FlyingCarND/projects/FCND-Estination-CPP/cmake-build-debug

@@ -3,7 +3,11 @@ project(CPPEstSim)
 
 set(CMAKE_CXX_STANDARD 11)
 #set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++0x")
-
+set(Qt5_CMAKE_DIR "/usr/local/opt/qt5/lib/cmake")
+set(Qt5Core_DIR ${Qt5_CMAKE_DIR}/Qt5Core)
+set(Qt5OpenGL_DIR ${Qt5_CMAKE_DIR}/Qt5OpenGL)
+set(Qt5Network_DIR ${Qt5_CMAKE_DIR}/Qt5Network)
+set(Qt5Widgets_DIR ${Qt5_CMAKE_DIR}/Qt5Widgets)
 include_directories(src)
 include_directories(lib)
 
