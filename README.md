@@ -37,6 +37,6 @@ Moving a flying vehicle requires determining appropriate low-level motor control
 
 Utilize sensor fusion and filtering. Design an Extended Kalman Filter (EKF) to estimate attitude and position from IMU and GPS data of a flying robot.
 
-![pj4](images/)
+![pj4](images/project4.png)
    
   
