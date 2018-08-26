@@ -280,6 +280,45 @@ And the result is
 
 **Hint: see section 7.3.1 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on the GPS update.**
 
+
+#### UpdateFromGPS()
+
+We get position and velocity from the GPS. 
+We considered using heading from the GPS, but this does not take into account the drone’s orientation, 
+only the direction of travel. Hence we are removing it from the observation.
+
+![gps-1](images/gps-1.png)
+
+Then the measurement model is
+
+![gps-2](images/gps-2.png)
+
+Then the partial derivative is the identity matrix,
+
+![gps-3](images/gps-3.png)
+
+And this will be a simple code like this.
+
+```cpp
+zFromX(0) = ekfState(0);
+zFromX(1) = ekfState(1);
+zFromX(2) = ekfState(2);
+zFromX(3) = ekfState(3);
+zFromX(4) = ekfState(4);
+zFromX(5) = ekfState(5);
+
+hPrime(0, 0) = 1;
+hPrime(1, 1) = 1;
+hPrime(2, 2) = 1;
+hPrime(3, 3) = 1;
+hPrime(4, 4) = 1;
+hPrime(5, 5) = 1;
+```
+
+And result is like this.
+
+![res5](images/res5.png)
+
 At this point, congratulations on having a working estimator!
 
 ### Step 6: Adding Your Controller ###
