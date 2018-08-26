@@ -83,7 +83,7 @@ Because of this, estimator will be robust to
 * short term noise
 * susceptible to drift
 
-But the implementation provided linear. So it's necessary to implement non-linear one.
+But the implementation provided linear one. So it's necessary to implement non-linear one.
 
 First, I need to translate body frame sensor value to world frame value using rotation matrix.
 
@@ -106,20 +106,17 @@ Then I got this
 
 ### Step 3: Prediction Step ###
 
-In this next step you will be implementing the prediction step of your filter.
+In this step you will be implementing the prediction step of your filter.
 
 
 1. Run scenario `08_PredictState`.  This scenario is configured to use a perfect IMU (only an IMU). Due to the sensitivity of double-integration to attitude errors, we've made the accelerometer update very insignificant (`QuadEstimatorEKF.attitudeTau = 100`).  The plots on this simulation show element of your estimated state and that of the true state.  At the moment you should see that your estimated state does not follow the true state.
-
 2. In `QuadEstimatorEKF.cpp`, implement the state prediction step in the `PredictState()` functon. If you do it correctly, when you run scenario `08_PredictState` you should see the estimator state track the actual state, with only reasonably slow drift, as shown in the figure below:
-
 ![predict drift](images/predict-slow-drift.png)
 
 3. Now let's introduce a realistic IMU, one with noise.  Run scenario `09_PredictionCov`. You will see a small fleet of quadcopter all using your prediction code to integrate forward. You will see two plots:
    - The top graph shows 10 (prediction-only) position X estimates
    - The bottom graph shows 10 (prediction-only) velocity estimates
 You will notice however that the estimated covariance (white bounds) currently do not capture the growing errors.
-
 4. In `QuadEstimatorEKF.cpp`, calculate the partial derivative of the body-to-global rotation matrix in the function `GetRbgPrime()`.  Once you have that function implement, implement the rest of the prediction step (predict the state covariance forward) in `Predict()`.
 
 **Hint: see section 7.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on the the transition model and the partial derivatives you may need**
@@ -146,6 +143,75 @@ Another set of bad examples is shown below for having a `QVelXYStd` too large (f
 
 ***Success criteria:*** *This step doesn't have any specific measurable criteria being checked.*
 
+
+#### `PredictState()`
+
+In `PredictState()` function, I implement dead reckoning from lesson Notebook(Dead Reckoning In 3D).
+
+The code look like this.
+
+```cpp
+// Dead Reckoning
+
+predictedState(0) = curState(0) + curState(3) * dt;
+predictedState(1) = curState(1) + curState(4) * dt;
+predictedState(2) = curState(2) + curState(5) * dt;
+
+// Convert body frame to the inertial frame
+V3F acc_int = attitude.Rotate_BtoI(accel);
+
+predictedState(3) = curState(3) + acc_int.x * dt;
+predictedState(4) = curState(4) + acc_int.y * dt;
+predictedState(5) = curState(5) + acc_int.z * dt - CONST_GRAVITY * dt;
+```
+
+And this code reduce error.
+
+![predictState](images/predictState.png) 
+
+#### `GetRbgPrime()`
+
+In `GetRbgPrime()` function, I implement calculating the partial derivative of the body-to-global rotation matrix.
+
+As [this document](https://www.overleaf.com/read/vymfngphcccj#/54894644/) describe in 7.2 Transition Model,
+
+![Rgb-matrix](images/Rgb-prime-matrix.png)   
+
+And this code look like this,
+
+```cpp
+RbgPrime(0,0) = -(cos(theta) * sin(psi));
+RbgPrime(0,1) = -(sin(phi) * sin(theta) * sin(psi)) - (cos(phi) * cos(psi));
+RbgPrime(0,2) = -(cos(phi) * sin(theta) * sin(psi)) + sin(phi) * cos(psi);
+RbgPrime(1,0) = cos(theta) * cos(psi);
+RbgPrime(1,1) = sin(phi) * sin(theta) * cos(psi) - cos(phi) * sin(psi);
+RbgPrime(1,2) = cos(phi) * sin(theta) * cos(psi) + sin(phi) * sin(psi);
+RbgPrime(2,0) = 0;
+RbgPrime(2,1) = 0;
+RbgPrime(2,2) = 0;
+```
+
+#### `Predict()`
+
+Predict the current covariance forward by dt using the current accelerations and body rates as input using `getRbgPrime()` method implemented in previous step
+and g pime function like this.
+
+![g-prime](images/g-prime.png)
+
+
+```cpp
+gPrime(0,3) = dt;
+gPrime(1,4) = dt;
+gPrime(2,5) = dt;
+gPrime(3, 6) = (RbgPrime(0) * accel).sum() * dt;
+gPrime(4, 6) = (RbgPrime(1) * accel).sum() * dt;
+gPrime(5, 6) = (RbgPrime(2) * accel).sum() * dt;
+ekfCov = gPrime * ekfCov * gPrime.transpose() + Q;
+```
+
+The result is this
+
+![res3-2](images/res3-2.png)
 
 ### Step 4: Magnetometer Update ###
 
