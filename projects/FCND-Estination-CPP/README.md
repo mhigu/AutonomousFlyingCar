@@ -215,16 +215,13 @@ The result is this
 
 ### Step 4: Magnetometer Update ###
 
-Up until now we've only used the accelerometer and gyro for our state estimation.  In this step, you will be adding the information from the magnetometer to improve your filter's performance in estimating the vehicle's heading.
+Up until now we've only used the accelerometer and gyro for our state estimation.  
+In this step, I will be adding the information from the magnetometer to improve filter's performance in estimating the vehicle's heading.
 
 1. Run scenario `10_MagUpdate`.  This scenario uses a realistic IMU, but the magnetometer update hasn’t been implemented yet. As a result, you will notice that the estimate yaw is drifting away from the real value (and the estimated standard deviation is also increasing).  Note that in this case the plot is showing you the estimated yaw error (`quad.est.e.yaw`), which is drifting away from zero as the simulation runs.  You should also see the estimated standard deviation of that state (white boundary) is also increasing.
-
 2. Tune the parameter `QYawStd` (`QuadEstimatorEKF.txt`) for the QuadEstimatorEKF so that it approximately captures the magnitude of the drift, as demonstrated here:
-
 ![mag drift](images/mag-drift.png)
-
 3. Implement magnetometer update in the function `UpdateFromMag()`.  Once completed, you should see a resulting plot similar to this one:
-
 ![mag good](images/mag-good-solution.png)
 
 ***Success criteria:*** *Your goal is to both have an estimated standard deviation that accurately captures the error and maintain an error of less than 0.1rad in heading for at least 10 seconds of the simulation.*
@@ -233,6 +230,33 @@ Up until now we've only used the accelerometer and gyro for our state estimation
 
 **Hint: see section 7.3.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on the magnetometer update.**
 
+#### `UpdateFromMag()`
+
+We get a sensor value from the magnetometer reporting yaw in the global frame.
+
+![yaw_magnetometer](images/magnetometer-1.png)
+
+And this is liner so the derivative is a matrix of zeros and ones.
+
+![yaw_derivative](images/magnetometer-2.png)
+
+So I implement this code.
+
+```cpp
+hPrime(0, 6) = 1;
+zFromX(0) = ekfState(6);
+
+float diff = magYaw - zFromX(0);
+if ( diff > F_PI ) {
+  zFromX(0) += 2.f*F_PI;
+} else if ( diff < -F_PI ) {
+  zFromX(0) -= 2.f*F_PI;
+}
+```
+
+And the result is
+
+![res4](images/res4.png)
 
 ### Step 5: Closed Loop + GPS Update ###
 
