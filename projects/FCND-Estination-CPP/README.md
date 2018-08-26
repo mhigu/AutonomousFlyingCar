@@ -1,68 +1,11 @@
 # Estimation Project #
 
-Welcome to the estimation project.  In this project, you will be developing the estimation portion of the controller used in the CPP simulator.  By the end of the project, your simulated quad will be flying with your estimator and your custom controller (from the previous project)!
+In this project, I will be developing the estimation portion of the controller used in the CPP simulator.  
 
-This README is broken down into the following sections:
-
- - [Setup](#setup) - the environment and code setup required to get started and a brief overview of the project structure
- - [The Tasks](#the-tasks) - the tasks you will need to complete for the project
- - [Tips and Tricks](#tips-and-tricks) - some additional tips and tricks you may find useful along the way
- - [Submission](#submission) - overview of the requirements for your project submission
-
-
-## Setup ##
-
-This project will continue to use the C++ development environment you set up in the Controls C++ project.
-
- 1. Clone the repository
- ```
- git clone https://github.com/udacity/FCND-Estimation-CPP.git
- ```
-
- 2. Import the code into your IDE like done in the [Controls C++ project](https://github.com/udacity/FCND-Controls-CPP#development-environment-setup)
- 
- 3. You should now be able to compile and run the estimation simulator just as you did in the controls project
-
-
-### Project Structure ###
-
-For this project, you will be interacting with a few more files than before.
-
- - The EKF is already partially implemented for you in `QuadEstimatorEKF.cpp`
-
- - Parameters for tuning the EKF are in the parameter file `QuadEstimatorEKF.txt`
-
- - When you turn on various sensors (the scenarios configure them, e.g. `Quad.Sensors += SimIMU, SimMag, SimGPS`), additional sensor plots will become available to see what the simulated sensors measure.
-
- - The EKF implementation exposes both the estimated state and a number of additional variables. In particular:
-
-   - `Quad.Est.E.X` is the error in estimated X position from true value.  More generally, the variables in `<vehicle>.Est.E.*` are relative errors, though some are combined errors (e.g. MaxEuler).
-
-   - `Quad.Est.S.X` is the estimated standard deviation of the X state (that is, the square root of the appropriate diagonal variable in the covariance matrix). More generally, the variables in `<vehicle>.Est.S.*` are standard deviations calculated from the estimator state covariance matrix.
-
-   - `Quad.Est.D` contains miscellaneous additional debug variables useful in diagnosing the filter. You may or might not find these useful but they were helpful to us in verifying the filter and may give you some ideas if you hit a block.
-
-
-#### `config` Directory ####
-
-In the `config` directory, in addition to finding the configuration files for your controller and your estimator, you will also see configuration files for each of the simulations.  For this project, you will be working with simulations 06 through 11 and you may find it insightful to take a look at the configuration for the simulation.
-
-As an example, if we look through the configuration file for scenario 07, we see the following parameters controlling the sensor:
-
-```
-# Sensors
-Quad.Sensors = SimIMU
-# use a perfect IMU
-SimIMU.AccelStd = 0,0,0
-SimIMU.GyroStd = 0,0,0
-```
-
-This configuration tells us that the simulator is only using an IMU and the sensor data will have no noise.  You will notice that for each simulator these parameters will change slightly as additional sensors are being used and the noise behavior of the sensors change.
+![top](images/predict-slow-drift.png)
 
 
 ## The Tasks ##
-
-Once again, you will be building up your estimator in pieces.  At each step, there will be a set of success criteria that will be displayed both in the plots and in the terminal output to help you along the way.
 
 Project outline:
 
@@ -77,41 +20,71 @@ Project outline:
 
 ### Step 1: Sensor Noise ###
 
-For the controls project, the simulator was working with a perfect set of sensors, meaning none of the sensors had any noise.  The first step to adding additional realism to the problem, and developing an estimator, is adding noise to the quad's sensors.  For the first step, you will collect some simulated noisy sensor data and estimate the standard deviation of the quad's sensor.
+For the controls project, the simulator was working with a perfect set of sensors, meaning none of the sensors had any noise.  
+The first step to adding additional realism to the problem, and developing an estimator, is adding noise to the quad's sensors. 
+For the first step, I will collect some simulated noisy sensor data and estimate the standard deviation of the quad's sensor.
 
 1. Run the simulator in the same way as you have before
-
 2. Choose scenario `06_NoisySensors`.  In this simulation, the interest is to record some sensor data on a static quad, so you will not see the quad move.  You will see two plots at the bottom, one for GPS X position and one for The accelerometer's x measurement.  The dashed lines are a visualization of a single standard deviation from 0 for each signal. The standard deviations are initially set to arbitrary values (after processing the data in the next step, you will be adjusting these values).  If they were set correctly, we should see ~68% of the measurement points fall into the +/- 1 sigma bound.  When you run this scenario, the graphs you see will be recorded to the following csv files with headers: `config/log/Graph1.txt` (GPS X data) and `config/log/Graph2.txt` (Accelerometer X data).
-
 3. Process the logged files to figure out the standard deviation of the the GPS X signal and the IMU Accelerometer X signal.
-
 4. Plug in your result into the top of `config/6_Sensornoise.txt`.  Specially, set the values for `MeasuredStdDev_GPSPosXY` and `MeasuredStdDev_AccelXY` to be the values you have calculated.
-
 5. Run the simulator. If your values are correct, the dashed lines in the simulation will eventually turn green, indicating you’re capturing approx 68% of the respective measurements (which is what we expect within +/- 1 sigma bound for a Gaussian noise model)
 
-***Success criteria:*** *Your standard deviations should accurately capture the value of approximately 68% of the respective measurements.*
 
-NOTE: Your answer should match the settings in `SimulatedSensors.txt`, where you can also grab the simulated noise parameters for all the other sensors.
+For step 4, I use pandas `read_csv()` and `std()` method for `DataFrame` for each csv file(config/log/Graph1.txt, config/log/Graph2.txt).
+
+And the sample is like this
+
+```python
+import pandas as pd
+g1 = pd.read_csv('/Users/mhigu/dev/GitHub/Udacity_FlyingCarND/projects/FCND-Estination-CPP/config/log/Graph1.txt')
+g1.std()
+# you can use `g1.std(ddof=False)` when you have big data
+``` 
+
+And output become like this.
+
+```text
+time           1.009937
+Quad.GPS.X     0.612126
+dtype: float64
+```
+
+And use this value for each. 
+
+***Success criteria:*** *standard deviations should accurately capture the value of approximately 68% of the respective measurements.*
+
 
 
 ### Step 2: Attitude Estimation ###
 
-Now let's look at the first step to our state estimation: including information from our IMU.  In this step, you will be improving the complementary filter-type attitude filter with a better rate gyro attitude integration scheme.
+Now let's look at the first step to our state estimation: including information from our IMU.  
+In this step, I will be improving the complementary filter-type attitude filter with a better rate gyro attitude integration scheme.
 
 1. Run scenario `07_AttitudeEstimation`.  For this simulation, the only sensor used is the IMU and noise levels are set to 0 (see `config/07_AttitudeEstimation.txt` for all the settings for this simulation).  There are two plots visible in this simulation.
    - The top graph is showing errors in each of the estimated Euler angles.
    - The bottom shows the true Euler angles and the estimates.
 Observe that there’s quite a bit of error in attitude estimation.
 
-2. In `QuadEstimatorEKF.cpp`, you will see the function `UpdateFromIMU()` contains a complementary filter-type attitude filter.  To reduce the errors in the estimated attitude (Euler Angles), implement a better rate gyro attitude integration scheme.  You should be able to reduce the attitude errors to get within 0.1 rad for each of the Euler angles, as shown in the screenshot below.
+2. In `QuadEstimatorEKF.cpp`, I will see the function `UpdateFromIMU()` contains a complementary filter-type attitude filter.  
+To reduce the errors in the estimated attitude (Euler Angles), implement a better rate gyro attitude integration scheme.  
+I should be able to reduce the attitude errors to get within 0.1 rad for each of the Euler angles, as shown in the screenshot below.
 
 ![attitude example](images/attitude-screenshot.png)
 
-In the screenshot above the attitude estimation using linear scheme (left) and using the improved nonlinear scheme (right). Note that Y axis on error is much greater on left.
-
-***Success criteria:*** *Your attitude estimator needs to get within 0.1 rad for each of the Euler angles for at least 3 seconds.*
+In the screenshot above the attitude estimation using linear scheme (left) and using the improved nonlinear scheme (right). 
+Note that Y axis on error is much greater on left.
 
 **Hint: see section 7.1.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on a good non-linear complimentary filter for attitude using quaternions.**
+
+As hint above shows, the equation apply high pass filter and low pass filter for accelerometer and gyro sensor.
+Becuase of this the estimator will be robust to 
+
+* short term noise
+* susceptible to drift
+
+
+***Success criteria:*** *Your attitude estimator needs to get within 0.1 rad for each of the Euler angles for at least 3 seconds.*
 
 
 ### Step 3: Prediction Step ###

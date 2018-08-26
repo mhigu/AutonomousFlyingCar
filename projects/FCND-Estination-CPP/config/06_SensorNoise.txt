@@ -1,7 +1,8 @@
 ### STUDENT SECTION
 
-MeasuredStdDev_GPSPosXY = 2
-MeasuredStdDev_AccelXY = .1
+# this value was 0.612249 in method output, but that not work..
+MeasuredStdDev_GPSPosXY = 0.712249
+MeasuredStdDev_AccelXY = 0.504661
 
 ### END STUDENT SECTION
 
