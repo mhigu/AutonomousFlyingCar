@@ -93,9 +93,29 @@ void QuadEstimatorEKF::UpdateFromIMU(V3F accel, V3F gyro)
   // (replace the code below)
   // make sure you comment it out when you add your own code -- otherwise e.g. you might integrate yaw twice
 
-  float predictedPitch = pitchEst + dtIMU * gyro.y;
-  float predictedRoll = rollEst + dtIMU * gyro.x;
-  ekfState(6) = ekfState(6) + dtIMU * gyro.z;	// yaw
+//  float predictedPitch = pitchEst + dtIMU * gyro.y;
+//  float predictedRoll = rollEst + dtIMU * gyro.x;
+//  ekfState(6) = ekfState(6) + dtIMU * gyro.z;	// yaw
+
+  float phi = rollEst;
+  float theta = pitchEst;
+  // Define Rotation Matrix!
+  Mat3x3F R = Mat3x3F();
+  R(0,0) = 1;
+  R(0,1) = sin(phi) * tan(theta);
+  R(0,2) = cos(phi) * tan(theta);
+  R(1,0) = 0;
+  R(1,1) = cos(phi);
+  R(1,2) = -sin(phi);
+  R(2,0) = 0;
+  R(2,1) = sin(phi) / cos(theta);  // sec(theta) = 1 / cos(theta)
+  R(2,2) = cos(phi) / cos(theta);  // sec(theta) = 1 / cos(theta)
+
+  V3F euler_dot = R * gyro ;
+
+  float predictedRoll = rollEst + dtIMU * euler_dot.x;
+  float predictedPitch = pitchEst + dtIMU * euler_dot.y;
+  ekfState(6) = ekfState(6) + dtIMU * euler_dot.z;	// yaw
 
   // normalize yaw to -pi .. pi
   if (ekfState(6) > F_PI) ekfState(6) -= 2.f*F_PI;

@@ -78,11 +78,28 @@ Note that Y axis on error is much greater on left.
 **Hint: see section 7.1.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on a good non-linear complimentary filter for attitude using quaternions.**
 
 As hint above shows, the equation apply high pass filter and low pass filter for accelerometer and gyro sensor.
-Becuase of this the estimator will be robust to 
+Because of this, estimator will be robust to 
 
 * short term noise
 * susceptible to drift
 
+But the implementation provided linear. So it's necessary to implement non-linear one.
+
+First, I need to translate body frame sensor value to world frame value using rotation matrix.
+
+![rotation matrix](images/rotation-matrix.png)
+
+After translation, we integrate prediction value.
+
+```cpp
+float predictedRoll = rollEst + dtIMU * euler_dot.x;
+float predictedPitch = pitchEst + dtIMU * euler_dot.y;
+ekfState(6) = ekfState(6) + dtIMU * euler_dot.z;	// yaw
+```
+
+Then I got this
+
+![result2](images/res2.gif)
 
 ***Success criteria:*** *Your attitude estimator needs to get within 0.1 rad for each of the Euler angles for at least 3 seconds.*
 
